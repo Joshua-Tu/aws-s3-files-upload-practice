@@ -97,9 +97,9 @@ class Home extends Component {
           if (200 === response.status) {
             // If file size is larger than expected.
             if (response.data.error) {
-              if ("LIMIT_FILE_SIZE" === response.data.error.code) {
+              if (response.data.error.code === "LIMIT_FILE_SIZE") {
                 this.ocShowAlert("Max size: 2MB", "red");
-              } else if ("LIMIT_UNEXPECTED_FILE" === response.data.error.code) {
+              } else if (response.data.error.code === "LIMIT_UNEXPECTED_FILE") {
                 this.ocShowAlert("Max 4 images allowed", "red");
               } else {
                 // If not the given ile type
@@ -118,7 +118,7 @@ class Home extends Component {
           this.ocShowAlert(error, "red");
         });
     } else {
-      // if file not selected throw error
+      //if file not selected throw error
       this.ocShowAlert("Please upload file", "red");
     }
   };
@@ -139,6 +139,7 @@ class Home extends Component {
   };
 
   render() {
+    console.log(this.state);
     const { file } = this.state;
     //console.log(this.state); //this will show the information for state of selectedFile state, which will change after you choose a file, it contains file information as well
     return (
