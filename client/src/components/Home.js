@@ -7,7 +7,9 @@ class Home extends Component {
     super(props);
     this.state = {
       selectedFile: null, //for single file upload
-      selectedFiles: null //for multiple file upload
+      selectedFiles: null, //for multiple file upload
+      file: null,
+      files: null
     };
   }
 
@@ -16,6 +18,13 @@ class Home extends Component {
     this.setState({
       selectedFile: event.target.files[0]
     });
+  };
+
+  multipleFileChangedHandler = event => {
+    this.setState({
+      selectedFiles: event.target.files
+    });
+    console.log(event.target.files);
   };
 
   singleFileUploadHandler = event => {
@@ -50,8 +59,56 @@ class Home extends Component {
             } else {
               // Success
               let fileData = response.data;
+              this.setState({ file: fileData });
               console.log("file data image name", fileData.image);
               console.log("file data image location", fileData.location);
+              this.ocShowAlert("File Uploaded", "#3089cf");
+            }
+          }
+        })
+        .catch(error => {
+          // If another error
+          this.ocShowAlert(error, "red");
+        });
+    } else {
+      // if file not selected throw error
+      this.ocShowAlert("Please upload file", "red");
+    }
+  };
+
+  multipleFileUploadHandler = () => {
+    const data = new FormData();
+    let selectedFiles = this.state.selectedFiles; // this.state.selectedFiles recieved the data from the multipleFileChangedHandler
+    // If file selected
+    if (selectedFiles) {
+      for (let i = 0; i < selectedFiles.length; i++) {
+        data.append("galleryImage", selectedFiles[i], selectedFiles[i].name);
+      }
+      axios
+        .post("/api/profile/multiple-file-upload", data, {
+          headers: {
+            accept: "application/json",
+            "Accept-Language": "en-US,en;q=0.8",
+            "Content-Type": `multipart/form-data; boundary=${data._boundary}`
+          }
+        })
+        .then(response => {
+          console.log("res", response);
+          if (200 === response.status) {
+            // If file size is larger than expected.
+            if (response.data.error) {
+              if ("LIMIT_FILE_SIZE" === response.data.error.code) {
+                this.ocShowAlert("Max size: 2MB", "red");
+              } else if ("LIMIT_UNEXPECTED_FILE" === response.data.error.code) {
+                this.ocShowAlert("Max 4 images allowed", "red");
+              } else {
+                // If not the given ile type
+                this.ocShowAlert(response.data.error, "red");
+              }
+            } else {
+              // Success
+              let fileName = response.data;
+              console.log("fileName", fileName);
               this.ocShowAlert("File Uploaded", "#3089cf");
             }
           }
@@ -87,13 +144,21 @@ class Home extends Component {
   }
 
   render() {
+    const { file } = this.state;
     //console.log(this.state); //this will show the information for state of selectedFile state, which will change after you choose a file, it contains file information as well
     return (
       <div className="container">
         {/* For Alert box*/}
         <div id="oc-alert-container" />
         {/* Once you upload your profile picture, it should appear here  */}
-        <div id="profile-image-pic" />
+        <div id="profile-image-pic" className="col-md-4 col-sm-4 text-center">
+          <img
+            className="btn-md"
+            src={file && file.location}
+            alt={file && file.image}
+            style={{ borderRadius: "50%", height: "10em", width: "10em" }}
+          />
+        </div>
         {/* Single File Upload*/}
         <div
           className="card border-light mb-3 mt-5"
