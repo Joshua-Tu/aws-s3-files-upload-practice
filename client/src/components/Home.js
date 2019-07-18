@@ -6,10 +6,12 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedFile: null, //for single file upload
-      selectedFiles: null, //for multiple file upload
-      file: null, //single file, single image
-      files: null //multiple files, multiple images
+      selectedFile: null, //for single image file upload
+      selectedFiles: null, //for multiple image file upload
+      file: null, //single image file, single image
+      files: null, //multiple image files, multiple images
+
+      selectedVideoFile: null //single video file initial state
     };
   }
 
