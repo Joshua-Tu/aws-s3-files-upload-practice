@@ -81,8 +81,9 @@ class Home extends Component {
     }, 3000);
   };
 
-  getSnapshotBeforeUpdate() {
-    let profileImageContainer = document.querySelector("#profile-image-picr");
+  //////I'll figure out how to use the image location url here.
+  getProfileImage() {
+    let profileImageContainer = document.querySelector("#profile-image-pic");
   }
 
   render() {
@@ -116,6 +117,41 @@ class Home extends Component {
               >
                 Upload!
               </button>
+            </div>
+          </div>
+
+          {/* Multiple File Upload */}
+          <div
+            className="card border-light mb-3"
+            style={{ boxShadow: "0 5px 10px 2px rgba(195,192,192,.5)" }}
+          >
+            <div className="card-header">
+              <h3 style={{ color: "#555", marginLeft: "12px" }}>
+                Upload Muliple Images
+              </h3>
+              <p className="text-muted" style={{ marginLeft: "12px" }}>
+                Upload Size: 400px x 400px ( Max 2MB )
+              </p>
+            </div>
+            <div className="card-body">
+              <p className="card-text">
+                Please upload the Gallery Images for your gallery
+              </p>
+
+              {/* NOTICE THERE IS A MULTIPLE ATTRIBUTE IN THIS INPUT TAG */}
+              <input
+                type="file"
+                multiple
+                onChange={this.multipleFileChangedHandler}
+              />
+              <div className="mt-5">
+                <button
+                  className="btn btn-info"
+                  onClick={this.multipleFileUploadHandler}
+                >
+                  Upload!
+                </button>
+              </div>
             </div>
           </div>
         </div>
