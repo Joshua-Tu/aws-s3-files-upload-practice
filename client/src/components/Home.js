@@ -8,8 +8,8 @@ class Home extends Component {
     this.state = {
       selectedFile: null, //for single file upload
       selectedFiles: null, //for multiple file upload
-      file: null,
-      files: null
+      file: null, //single file, single image
+      files: null //multiple files, multiple images
     };
   }
 
@@ -138,11 +138,6 @@ class Home extends Component {
     }, 3000);
   };
 
-  //////I'll figure out how to use the image location url here.
-  getProfileImage() {
-    let profileImageContainer = document.querySelector("#profile-image-pic");
-  }
-
   render() {
     const { file } = this.state;
     //console.log(this.state); //this will show the information for state of selectedFile state, which will change after you choose a file, it contains file information as well
@@ -151,7 +146,7 @@ class Home extends Component {
         {/* For Alert box*/}
         <div id="oc-alert-container" />
         {/* Once you upload your profile picture, it should appear here  */}
-        <div id="profile-image-pic" className="col-md-4 col-sm-4 text-center">
+        <div className="col-md-4 col-sm-4 text-center">
           <img
             className="btn-md"
             src={file && file.location}
