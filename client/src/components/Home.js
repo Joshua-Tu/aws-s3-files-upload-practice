@@ -11,7 +11,8 @@ class Home extends Component {
       file: null, //single image file, single image
       files: null, //multiple image files, multiple images
 
-      selectedVideoFile: null //single video file initial state
+      selectedVideoFile: null,
+      videoFile: null //single video file initial state
     };
   }
 
@@ -19,6 +20,14 @@ class Home extends Component {
     //console.log(event.target.files); //this will show you whats inside the event target.
     this.setState({
       selectedFile: event.target.files[0]
+    });
+  };
+
+  /////single video file change detector
+  singleVideoFileChangedHandler = event => {
+    //console.log(event.target.files); //this will show you whats inside the event target.
+    this.setState({
+      selectedVideoFile: event.target.files[0]
     });
   };
 
@@ -125,6 +134,60 @@ class Home extends Component {
     }
   };
 
+  /**
+   * single video file uploader is here
+   */
+  singleVideoFileUploadHandler = event => {
+    const data = new FormData();
+    // If file selected
+    if (this.state.selectedVideoFile) {
+      data.append(
+        "singleVideo", //this is from the backend profile.js api
+        this.state.selectedVideoFile,
+        this.state.selectedVideoFile.name
+      );
+      axios
+        //this route is the same as it is in the router.post
+        .post("/api/profile/single-video-upload", data, {
+          //this is important for the file tobe accepted on serverside
+          headers: {
+            accept: "application/json",
+            "Accept-Language": "en-US,en;q=0.8",
+            "Content-Type": `multipart/form-data; boundary=${data._boundary}`
+          }
+        })
+        .then(response => {
+          if (response.status === 200) {
+            // If file size is larger than expected.
+            if (response.data.error) {
+              if (response.data.error.code === "LIMIT_FILE_SIZE") {
+                this.ocShowAlert("Max size: 200MB", "red");
+              } else {
+                console.log(response.data);
+                // If not the given file type
+                this.ocShowAlert(response.data.error, "red");
+              }
+            } else {
+              // Success
+              let fileData = response.data;
+              this.setState({ file: fileData });
+              console.log("file data video name", fileData.video); //.video is from the backend profile.js
+              console.log("file data video location", fileData.location); //location is from the backend as well
+              this.ocShowAlert("File Uploaded", "#3089cf");
+            }
+          }
+        })
+        .catch(error => {
+          // If another error
+          this.ocShowAlert(error, "red");
+        });
+    } else {
+      // if file not selected throw error
+      this.ocShowAlert("Please upload file", "red");
+    }
+  };
+  ////////////
+
   // ShowAlert Function
   ocShowAlert = (message, background = "#3089cf") => {
     let alertContainer = document.querySelector("#oc-alert-container"),
@@ -157,6 +220,7 @@ class Home extends Component {
             style={{ borderRadius: "50%", height: "10em", width: "10em" }}
           />
         </div>
+
         {/* Single File Upload*/}
         <div
           className="card border-light mb-3 mt-5"
@@ -182,6 +246,16 @@ class Home extends Component {
               </button>
             </div>
           </div>
+
+          {/* Single Video File Upload */}
+
+          <input type="file" onChange={this.singleVideoFileChangedHandler} />
+          <button
+            className="btn btn-info"
+            onClick={this.singleVideoFileUploadHandler}
+          >
+            Upload a video!
+          </button>
 
           {/* Multiple File Upload */}
           <div

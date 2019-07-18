@@ -177,7 +177,7 @@ const videoUpload = multer({
     }
   }),
   //size in bytes: 2000000 bytes = 2 MB, comment the limits if you don't wanna set limits for you file.
-  limits: { fileSize: 2000000 },
+  limits: { fileSize: 200000000 },
   fileFilter: function(req, file, cb) {
     checkVideoFileType(file, cb);
   }
@@ -223,7 +223,7 @@ router.post("/single-video-upload", (req, res) => {
         const videoLocation = req.file.location;
         // Save the file name into database into profile model
         res.json({
-          image: videoName,
+          video: videoName,
           location: videoName
         });
       }
